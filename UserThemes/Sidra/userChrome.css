@@ -1235,21 +1235,6 @@ url("about:downloads") {
             transition: background-color var(--animation-speed, .13s) !important;
         }
 
-        /* toolbar button badges */
-        :is(.customization-target, .widget-overflow-list) :is(toolbarbutton, toolbaritem):is(:not([attention]), [attention="false"])>.toolbarbutton-badge-stack>.toolbarbutton-badge {
-            background-color: var(--toolbarbutton-badge-bgcolor, hsl(0, 100%, 42.5%)) !important;
-            color: var(--toolbar-color, white) !important;
-            box-shadow: 0 1px 1px -1px #ffffff4d inset, 0 -1px 1px -1px #00000080 inset, 0 1px 1px #1e1e2026, 0 1px 3px #1e1e2033 !important;
-            min-width: 10.5px !important;
-            height: 10.5px !important;
-            align-items: end !important;
-            font-size: 9px !important;
-            font-weight: var(--font-weight-bold, 600) !important;
-            line-height: 10px !important;
-            filter: none !important;
-            margin: -6px -6px 0 -6px !important;
-        }
-
         :is(.customization-target, .widget-overflow-list) #downloads-button[attention]>.toolbarbutton-badge-stack>.toolbarbutton-badge {
             margin-right: -5.5px !important;
             margin-top: -5.5px !important;
@@ -1260,6 +1245,10 @@ url("about:downloads") {
             background-size: contain !important;
             background-position: center !important;
             background-repeat: no-repeat !important;
+        }
+
+        :root[uidensity="compact"] #urlbar-input-container #location-bar toolbarbutton>.toolbarbutton-badge-stack>.toolbarbutton-badge {
+            margin-top: -4px !important;
         }
 
         :is(.customization-target, .widget-overflow-list) #downloads-button[attention="info"]>.toolbarbutton-badge-stack>.toolbarbutton-badge {
@@ -2818,7 +2807,8 @@ by underlining them (requires urlbarMods.uc.js) */
             appearance: none;
             --windows-panel-box-shadow: unset;
             --menuitem-padding: var(--arrowpanel-menuitem-padding-block);
-            --panel-shadow-margin: 0; /* Fx 113 */
+            --panel-shadow-margin: 0px;
+            /* Fx 113 */
         }
 
         :is(#history-menu, #bookmarksMenu) menupopup::part(content),
@@ -2848,6 +2838,10 @@ by underlining them (requires urlbarMods.uc.js) */
         menupopup:not(.in-menulist) menu:not(.menu-iconic),
         menupopup:not(.in-menulist) menuitem:not(.menuitem-iconic, [type="checkbox"], [type="radio"]) {
             padding-inline-start: var(--label-padding-start, 32px) !important;
+        }
+
+        #ContentSelectDropdown > menupopup > menucaption > .menu-iconic-text, #ContentSelectDropdown > menupopup > menuitem > .menu-iconic-text {
+            padding-block: 1px;
         }
 
         menupopup menu:not(.menu-iconic)>.menubar-text {
@@ -3806,6 +3800,7 @@ by underlining them (requires urlbarMods.uc.js) */
     }
 
     @supports -moz-bool-pref("userChromeJS.sidra.icon.complementary") {
+
         .subviewbutton,
         .toolbaritem-combined-buttons,
         :is(menu, menuitem) {
