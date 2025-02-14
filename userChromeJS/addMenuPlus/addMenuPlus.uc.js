@@ -1031,8 +1031,10 @@ location.href.startsWith('chrome://browser/content/browser.x') && (function (css
                 if (key === "_items") return;
                 if (key === "_group") return;
                 if (key.startsWith('on')) {
-                    if (typeof val !== "function") val = new Function(val);
-                    group.addEventListener(key.slice(2).toLocaleLowerCase(), val.bind(this), false);
+                    group.dataset[key] = typeof val == "function" ? val.toString() : val;
+                    group.addEventListener(key.slice(2).toLocaleLowerCase(), (event) => {
+                        eval('(' + group.dataset[key] + ').call(window, event)');
+                    }, false);
                 } else {
                     group.setAttribute(key, val);
                 }
@@ -1097,8 +1099,10 @@ location.href.startsWith('chrome://browser/content/browser.x') && (function (css
                 let val = menuObj[key];
                 if (key === "_items") continue;
                 if (key.startsWith('on')) {
-                    if (typeof val !== "function") val = new Function(val);
-                    menu.addEventListener(key.slice(2).toLowerCase(), val.bind(this), false);
+                    menu.dataset[key] = typeof val == "function" ? val.toString() : val;
+                    menu.addEventListener(key.slice(2).toLowerCase(), (event) => {
+                        eval('(' + menu.dataset[key] + ').call(window, event)');
+                    }, false);
                     continue;
                 }
                 menu.setAttribute(key, val);
@@ -1238,8 +1242,10 @@ location.href.startsWith('chrome://browser/content/browser.x') && (function (css
                 let val = obj[key];
                 if (key === "command") continue;
                 if (key.startsWith('on')) {
-                    if (typeof val !== "function") val = new Function(val);
-                    menuitem.addEventListener(key.slice(2).toLocaleLowerCase(), val.bind(this), false);
+                    menuitem.dataset[key] = typeof val == "function" ? val.toString() : val;
+                    menuitem.addEventListener(key.slice(2).toLocaleLowerCase(), (event) => {
+                        eval('(' + menuitem.dataset[key] + ').call(window, event)');
+                    }, false);
                 } else {
                     menuitem.setAttribute(key, val);
                 }
@@ -1353,8 +1359,10 @@ location.href.startsWith('chrome://browser/content/browser.x') && (function (css
                     for (let key in obj) {
                         let val = obj[key];
                         if (key.startsWith('on')) {
-                            if (typeof val !== "function") val = new Function(val);
-                            dupMenuitem.addEventListener(key.slice(2).toLocaleLowerCase(), val.bind(this), false);
+                            dupMenuitem.dataset[key] = typeof val == 'function' ? val.toString() : val;
+                            dupMenuitem.addEventListener(key.slice(2).toLocaleLowerCase(), (event) => {
+                                eval('(' + dupMenuitem.dataset[key] + ').call(window, event)');
+                            }, false);
                             continue;
                         }
                         dupMenuitem.setAttribute(key, val);
@@ -1899,12 +1907,10 @@ location.href.startsWith('chrome://browser/content/browser.x') && (function (css
         }
         if (attr) Object.keys(attr).forEach(function (n) {
             if (n.startsWith('on')) {
-                const fn = attr[n];
-                if (typeof fn === 'function') {
-                    el.addEventListener(n.slice(2).toLocaleLowerCase(), fn);
-                } else {
-                    el.addEventListener(n.slice(2).toLocaleLowerCase(), new Function(fn));
-                }
+                const fn = typeof attr[n] === "function" ? attr[n] : (event) => {
+                    eval(attr[n]);
+                };
+                el.addEventListener(n.slice(2).toLocaleLowerCase(), fn, false);
             } else {
                 el.setAttribute(n, attr[n]);
             }
@@ -1995,7 +2001,6 @@ location.href.startsWith('chrome://browser/content/browser.x') && (function (css
         }
     }
 
-
     function setImage (menu, imageUrl) {
         if (imageUrl) {
             if (enableConvertImageAttrToListStyleImage) {
@@ -2005,6 +2010,10 @@ location.href.startsWith('chrome://browser/content/browser.x') && (function (css
                 menu.setAttribute("image", imageUrl);
             }
         }
+    }
+
+    function isFunction (v) {
+        return typeof v === 'function' || (typeof v === 'object' && typeof v.constructor === 'function' && /^async\s*function/.test(v.constructor.toString()));
     }
 
     if (typeof _uc !== "undefined" && !_uc.isFaked) {
